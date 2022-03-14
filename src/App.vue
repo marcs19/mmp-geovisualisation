@@ -14,10 +14,7 @@ export default {
   },
 
   data() {
-    return {
-      results: [],
-      apiResults: [],
-    };
+    return {};
   },
   methods: {},
   // The API data is stored in a seperate results variable
