@@ -5,7 +5,7 @@
         <l-tile-layer :url="url" :attribution="attribution" />
         <l-marker :lat-lng="marker.latlngs" :icon="icon" />
         <l-rectangle :bounds="rectangle.bounds" :l-style="rectangle.style" />
-        <l-geo-json :geojson="geojson"></l-geo-json>
+        <l-geo-json :geojson="geojson" :options-style="spatialStyle" />
       </l-map>
     </div>
   </div>
@@ -26,7 +26,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       zoom: 11,
       center: [47.31322, -1.319482],
       geojson: null,
@@ -50,15 +49,24 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     };
   },
+  computed: {
+    spatialStyle(feature) {
+      return () => ({
+        color: '#E53935',
+        weight: 1.5,
+        filter: feature.filter,
+      });
+    },
+  },
   methods: {},
   async created() {
-    this.loading = true;
     const response = await fetch(
-      'https://mmp.acdh-dev.oeaw.ac.at/api/spatialcoverage/?format=json&id=1',
+      'https://mmp.acdh-dev.oeaw.ac.at/api/spatialcoverage/?format=json&id=3',
     );
     const data = await response.json();
+    data.features[0].properties.filter = 'url(#blur)';
+    console.log(data.features);
     this.geojson = data;
-    this.loading = false;
   },
 };
 window.addEventListener('load', function () {
