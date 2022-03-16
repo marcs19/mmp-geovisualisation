@@ -1,14 +1,3 @@
 module.exports = {
-  devServer: {
-    proxy: {
-      "^/api": {
-        target: "https://mmp.acdh-dev.oeaw.ac.at/api",
-        changeOrigin: true,
-        logLevel: "debug",
-        pathRewrite: {
-          "^/api": "/"
-        }
-      }
-    }
-  }
+  publicPath: process.env.NODE_ENV === 'production' ? '/REPO_NAME/' : '/',
 };

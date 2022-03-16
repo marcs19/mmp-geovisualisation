@@ -37,7 +37,7 @@ export default {
         style: { weight: 3, dashArray: '10 10' },
       },
       icon: L.icon({
-        iconUrl: require('/src/assets/index.png'),
+        iconUrl: './src/assets/index.png',
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
