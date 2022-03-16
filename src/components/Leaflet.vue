@@ -26,15 +26,15 @@ export default {
   },
   data() {
     return {
-      zoom: 11,
-      center: [47.31322, -1.319482],
+      zoom: 4,
+      center: [53.1017567989627, 5.9478799299367004],
       geojson: null,
       rectangle: {
         bounds: [
-          [47.341456, -1.397133],
-          [47.303901, -1.243813],
+          [48.4289313631231, -1.9558074747836995],
+          [46.678651824788524, 4.044055024736411],
         ],
-        style: { color: 'red', weight: 5 },
+        style: { weight: 3, dashArray: '10 10' },
       },
       icon: L.icon({
         iconUrl: require('/src/assets/index.png'),
@@ -45,66 +45,52 @@ export default {
         latlngs: [47.41322, -1.219482],
       },
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     };
   },
   computed: {
-    spatialStyle(feature) {
+    spatialStyle() {
       return () => ({
         color: '#E53935',
-        weight: 1.5,
-        filter: feature.filter,
+        weight: 5,
+        dashArray: '10 10',
       });
     },
   },
   methods: {},
   async created() {
-    const response = await fetch(
-      'https://mmp.acdh-dev.oeaw.ac.at/api/spatialcoverage/?format=json&id=3',
-    );
+    const response = await fetch('https://mmp.acdh-dev.oeaw.ac.at/api/spatialcoverage/?format=json&id=3');
     const data = await response.json();
     data.features[0].properties.filter = 'url(#blur)';
-    console.log(data.features);
     this.geojson = data;
   },
+  updated() {
+    var svg = document.getElementsByClassName('leaflet-overlay-pane')[0].firstChild,
+      // Create filter element
+      svgFilter = document.createElementNS('http://www.w3.org/2000/svg', 'filter'),
+      // Create blur element
+      svgBlur = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+
+    svgFilter.setAttribute('id', 'blur');
+
+    // Give room to blur to prevent clipping
+    svgFilter.setAttribute('x', '-100%');
+    svgFilter.setAttribute('y', '-100%');
+    svgFilter.setAttribute('width', '500%');
+    svgFilter.setAttribute('height', '500%');
+
+    // Set deviation attribute of blur
+    svgBlur.setAttribute('stdDeviation', 3);
+
+    // Append blur element to filter element
+    svgFilter.appendChild(svgBlur);
+    // Append filter element to SVG element
+    svg.appendChild(svgFilter);
+
+    for (let i = 0; i < document.getElementsByClassName('leaflet-interactive').length; i++) {
+      console.log(document.getElementsByClassName('leaflet-interactive')[i]);
+      document.getElementsByClassName('leaflet-interactive')[i].setAttribute('filter', 'url(#blur)');
+    }
+  },
 };
-window.addEventListener('load', function () {
-  var svg = document.getElementsByClassName('leaflet-overlay-pane')[0]
-      .firstChild,
-    // Create filter element
-    svgFilter = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'filter',
-    ),
-    // Create blur element
-    svgBlur = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'feGaussianBlur',
-    );
-
-  // Set ID attribute of filter
-  svgFilter.setAttribute('id', 'blur');
-
-  // Give room to blur to prevent clipping
-  svgFilter.setAttribute('x', '-100%');
-  svgFilter.setAttribute('y', '-100%');
-  svgFilter.setAttribute('width', '500%');
-  svgFilter.setAttribute('height', '500%');
-
-  // Set deviation attribute of blur
-  svgBlur.setAttribute('stdDeviation', 3);
-
-  // Append blur element to filter element
-  svgFilter.appendChild(svgBlur);
-  // Append filter element to SVG element
-  svg.appendChild(svgFilter);
-
-  document
-    .getElementsByClassName('leaflet-interactive')[0]
-    .setAttribute('filter', 'url(#blur)');
-  document
-    .getElementsByClassName('leaflet-interactive')[1]
-    .setAttribute('filter', 'url(#blur)');
-});
 </script>
