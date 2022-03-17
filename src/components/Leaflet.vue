@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <l-map :zoom="zoom" :center="center" style="height: 500px; width: 100%">
+      <l-map :zoom="zoom" :center="center" style="height: 100%; width: 100%">
         <l-tile-layer :url="url" :attribution="attribution" />
         <l-marker :lat-lng="marker.latlngs" :icon="icon" />
         <l-rectangle :bounds="rectangle.bounds" :l-style="rectangle.style" />
