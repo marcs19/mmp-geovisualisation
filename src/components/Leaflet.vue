@@ -3,7 +3,7 @@
     <div>
       <l-map :zoom="zoom" :center="center" style="height: 500px; width: 100%">
         <l-tile-layer :url="url" :attribution="attribution" />
-        <l-marker :lat-lng="marker.latlngs" :icon="icon" />
+        <l-marker :lat-lng="markerCoord" :icon="icon" />
         <l-rectangle :bounds="rectangle.bounds" :l-style="rectangle.style" />
         <l-geo-json :geojson="geojson" :options-style="spatialStyle" />
       </l-map>
@@ -29,6 +29,7 @@ export default {
       zoom: 4,
       center: [53.1017567989627, 5.9478799299367004],
       geojson: null,
+      markerCoord: [1, 1],
       rectangle: {
         bounds: [
           [48.4289313631231, -1.9558074747836995],
@@ -37,13 +38,10 @@ export default {
         style: { weight: 3, dashArray: '10 10' },
       },
       icon: L.icon({
-        iconUrl: './src/assets/index.png',
+        iconUrl: './index.png',
         iconSize: [32, 37],
         iconAnchor: [16, 37],
       }),
-      marker: {
-        latlngs: [47.41322, -1.219482],
-      },
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     };
@@ -57,12 +55,26 @@ export default {
       });
     },
   },
-  methods: {},
-  async created() {
-    const response = await fetch('https://mmp.acdh-dev.oeaw.ac.at/api/spatialcoverage/?format=json&id=3');
-    const data = await response.json();
-    data.features[0].properties.filter = 'url(#blur)';
-    this.geojson = data;
+  created() {
+    fetch('https://mmp.acdh-dev.oeaw.ac.at/api/spatialcoverage/?format=json&id=3')
+      .then((res) => res.json())
+      .then((jsonRes) => {
+        this.geojson = jsonRes;
+      });
+    fetch('https://mmp.acdh-dev.oeaw.ac.at/api/ort/?format=json&id=3')
+      .then((res) => res.json())
+      .then((jsonRes) => {
+        this.data = jsonRes;
+        const coords = this.data.results[0].coords.coordinates;
+        console.log(coords);
+        this.markerCoord = [coords[1], coords[0]];
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
   },
   updated() {
     var svg = document.getElementsByClassName('leaflet-overlay-pane')[0].firstChild,
