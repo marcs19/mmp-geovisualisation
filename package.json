@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vue/cli-plugin-babel": "4.1.1",
+    "chmod": "^0.2.1",
     "fundament": "1.0.1",
     "gh-pages": "3.2.3",
     "jw-vue-pagination": "1.0.3",

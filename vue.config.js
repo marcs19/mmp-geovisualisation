@@ -1,1 +1,1 @@
-module.exports = { publicPath: process.env.NODE_ENV === 'production' ? '/mmp-geovisualisation/dist/' : '/' };
+module.exports = { publicPath: '/mmp-geovisualisation/' };
