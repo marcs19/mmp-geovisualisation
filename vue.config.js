@@ -1,1 +1,1 @@
-module.exports = { publicPath: '/mmp-geovisualisation/' };
+module.exports = { publicPath: '/' };
