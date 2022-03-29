@@ -1,12 +1,13 @@
 <template>
   <div>
     <div>
-      <l-map ref="map" :zoom="zoom" :center="center" style="height: 100%; width: 100%; position: absolute">
+      <l-map ref="map" :zoom="zoom" :center="center" style="height: 95%; width: 100%; position: absolute">
         <l-tile-layer :url="url" :attribution="attribution" />
         <l-marker v-for="place in places" :key="place.id" :lat-lng="place.coords">
           <l-icon :iconSize="[32, 37]" :iconAnchor="[16, 37]" :icon-url="place.iconUrl" />
         </l-marker>
       </l-map>
+      <a href="https://github.com/marcs19/mmp-geovisualisation" target="_blank" style="z-index: 400; left: 50%; bottom: 2%; position: absolute"> Link to github repo </a>
     </div>
   </div>
 </template>
@@ -46,17 +47,16 @@ export default {
       for (let i of coordinates) {
         sortedCoords.push([i[1], i[0]]);
       }
-      var polygonLatLngs = sortedCoords;
       var projectedPolygon;
-      var triangle = new PIXI.Graphics();
+      var polygon = new PIXI.Graphics();
       var blurFilter = new PIXI.filters.BlurFilter();
-      triangle.filters = [blurFilter];
+      polygon.filters = [blurFilter];
 
       //blurFilter.blurX = 20;
       //blurFilter.blurY = 20;
 
       var pixiContainer = new PIXI.Container();
-      pixiContainer.addChild(triangle);
+      pixiContainer.addChild(polygon);
 
       var firstDraw = true;
 
@@ -68,25 +68,22 @@ export default {
         blurFilter.blur = fuzzyness * 20 * scale;
 
         if (firstDraw) {
-          projectedPolygon = polygonLatLngs.map(function (coords) {
+          projectedPolygon = sortedCoords.map(function (coords) {
             return project(coords);
           });
-          triangle.clear();
-          triangle.lineStyle(0, 0, 0);
-          triangle.beginFill(0x0000ff, 0.5);
+          polygon.lineStyle(0, 0, 0);
+          polygon.beginFill(0x0000ff, 0.5);
 
           projectedPolygon.forEach(function (coords, index) {
-            if (index == 0) triangle.moveTo(coords.x, coords.y);
-            else triangle.lineTo(coords.x, coords.y);
+            if (index == 0) polygon.moveTo(coords.x, coords.y);
+            else polygon.lineTo(coords.x, coords.y);
           });
-          triangle.endFill();
+          polygon.endFill();
         }
         firstDraw = false;
         renderer.render(container);
       }, pixiContainer);
-
       pixiOverlay.addTo(this.$refs.map.mapObject);
-      //document.getElementsByClassName('leaflet-overlay-pane')[0].createElementNS('leaflet-pixi-overlay leafet-zoom-animated', pixiOverlay);
     },
   },
   created() {
