@@ -40,7 +40,6 @@ export default {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     };
   },
-  computed: {},
   methods: {
     draw(coordinates, fuzzyness) {
       let sortedCoords = [];
@@ -129,7 +128,5 @@ export default {
         });
     }
   },
-  mounted() {},
-  updated() {},
 };
 </script>
