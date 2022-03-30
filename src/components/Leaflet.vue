@@ -59,8 +59,10 @@ export default {
       pixiContainer.addChild(polygon);
 
       var firstDraw = true;
+      var prevZoom;
 
       var pixiOverlay = L.pixiOverlay(function (utils) {
+        var zoom = utils.getMap().getZoom();
         var container = utils.getContainer();
         var renderer = utils.getRenderer();
         var project = utils.latLngToLayerPoint;
@@ -71,6 +73,9 @@ export default {
           projectedPolygon = sortedCoords.map(function (coords) {
             return project(coords);
           });
+        }
+        if (firstDraw || prevZoom !== zoom) {
+          polygon.clear();
           polygon.lineStyle(0, 0, 0);
           polygon.beginFill(0x0000ff, 0.5);
 
@@ -81,6 +86,7 @@ export default {
           polygon.endFill();
         }
         firstDraw = false;
+        prevZoom = zoom;
         renderer.render(container);
       }, pixiContainer);
       pixiOverlay.addTo(this.$refs.map.mapObject);
